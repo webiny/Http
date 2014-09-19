@@ -130,7 +130,7 @@ class CacheStorage implements SessionStorageInterface
      */
     public function read($session_id)
     {
-        return $this->_cacheDriver->read($this->_prefix . $session_id) ? : '';
+        return $this->_cacheDriver->read($this->_prefix . $session_id) ?: '';
     }
 
     /**
