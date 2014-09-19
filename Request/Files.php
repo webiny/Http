@@ -66,7 +66,8 @@ class Files
         } else {
             if (!isset($file['name'][$arrayOffset])) {
                 throw new FilesException('Uploaded file with name "' . $name . '" and
-											offset "' . $arrayOffset . '" was not found in the $_FILES array.');
+											offset "' . $arrayOffset . '" was not found in the $_FILES array.'
+                );
             }
 
             $fileObject = $this->_createFileObject($file, $arrayOffset);
@@ -86,7 +87,10 @@ class Files
     private function _createFileObject($file, $arrayOffset = null)
     {
         if (!is_null($arrayOffset)) {
-            $fileObject = new File($file['name'][$arrayOffset], $file['tmp_name'][$arrayOffset], $file['type'][$arrayOffset], $file['error'][$arrayOffset], $file['size'][$arrayOffset]);
+            $fileObject = new File($file['name'][$arrayOffset], $file['tmp_name'][$arrayOffset],
+                                   $file['type'][$arrayOffset], $file['error'][$arrayOffset],
+                                   $file['size'][$arrayOffset]
+            );
             $this->_fileObject[$file['name']][$arrayOffset] = $fileObject;
         } else {
             $fileObject = new File($file['name'], $file['tmp_name'], $file['type'], $file['error'], $file['size']);

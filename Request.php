@@ -345,20 +345,19 @@ class Request
         $protocol = strtolower($protocol);
 
         $isSecured = in_array($protocol, [
-                                           'https',
-                                           'on',
-                                           '1'
-                                       ]
+                'https',
+                'on',
+                '1'
+            ]
         );
 
         if (!$isSecured) {
             if (in_array(strtolower($this->server()->https()), [
-                                                                 'https',
-                                                                 'on',
-                                                                 '1'
-                                                             ]
-            )
-            ) {
+                    'https',
+                    'on',
+                    '1'
+                ]
+            )) {
                 $isSecured = true;
             }
         }
