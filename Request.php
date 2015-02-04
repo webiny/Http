@@ -114,6 +114,16 @@ class Request
     }
 
     /**
+     * Returns an array object with all GET parameters.
+     *
+     * @return Query
+     */
+    public function getQuery()
+    {
+        return $this->_query;
+    }
+
+    /**
      * Get a value from $_POST param for the given $key.
      * If key doesn't not exist, $value will be returned and assigned under that key.
      *
@@ -128,7 +138,7 @@ class Request
     }
 
     /**
-     * Returns an array object with all post parameters.
+     * Returns an array object with all POST parameters.
      *
      * @return Post
      */
@@ -150,7 +160,6 @@ class Request
     {
         return $this->isNull($key) ? $this->_headers->getAll() : $this->_headers->get($key, $value);
     }
-
 
     /**
      * Get a value from request payload param for the given $key.
@@ -267,14 +276,13 @@ class Request
 
             // port, server name and request uri
             $host = $this->getHostName();
-            /*
+
             $port = $this->getConnectionPort();
-            if($port && $port != "80") {
+            if ($port && $port != '80' && $port != '443') {
                 $pageURL .= $host . ":" . $port . $this->server()->requestUri();
             } else {
                 $pageURL .= $host . $this->server()->requestUri();
-            }*/
-            $pageURL .= $host . $this->server()->requestUri();
+            }
 
             // query
             $query = $this->server()->queryString();
@@ -373,12 +381,11 @@ class Request
      */
     public function getConnectionPort()
     {
-        $remoteAddress = $this->server()->remoteAddress();
+        $host = $this->str($this->server()->httpHost());
 
-        $port = $this->server()->serverPort();
-        $fwdPort = $this->server()->get($this->getTrustedHeaders()['client_port']);
-        if ($fwdPort && $fwdPort != '' && in_array($remoteAddress, $this->getTrustedProxies())) {
-            $port = $fwdPort;
+        $port = 80;
+        if($host->contains(':')){
+            $port = $host->explode(':')->last();
         }
 
         return $port;
@@ -401,21 +408,6 @@ class Request
         }
 
         return strtolower($host);
-    }
-
-    /**
-     * Redirect the request to the given url.
-     *
-     * @param string|UrlObject $url
-     * @param string|int|array $headers Headers that you wish to send with your request.
-     */
-    public function redirect($url, $headers = null)
-    {
-        if (!$this->isStdObject($url)) {
-            $url = $this->url($url);
-        }
-
-        $url->goToUrl($headers);
     }
 
     /**
