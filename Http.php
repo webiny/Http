@@ -24,17 +24,17 @@ class Http
      * Default component configuration
      * @var array
      */
-    private static $_defaultConfig = [
+    private static $defaultConfig = [
         'Session'        => [
             'Storage' => [
                 'Driver'     => '\Webiny\Component\Http\Session\Storage\NativeStorage',
-                'Prefix'     => 'wfs_',
+                'Prefix'     => '',
                 'ExpireTime' => 86400
             ]
         ],
         'TrustedProxies' => ['127.0.0.1'],
         'TrustedHeaders' => [
-            'client_ip'    => 'X_FORWARDED_FOR',
+            //'client_ip'    => 'X_FORWARDED_FOR', # needs to be explicitly enabled because this can be a security issue
             'client_host'  => 'X_FORWARDED_HOST',
             'client_proto' => 'X_FORWARDED_PROTO',
             'client_port'  => 'X_FORWARDED_PORT'
@@ -43,7 +43,7 @@ class Http
             'Storage'    => [
                 'Driver' => '\Webiny\Component\Http\Cookie\Storage\NativeStorage'
             ],
-            'Prefix'     => 'wfc_',
+            'Prefix'     => '',
             'HttpOnly'   => 'true',
             'ExpireTime' => 86400
         ]

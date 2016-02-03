@@ -11,6 +11,7 @@ use Webiny\Component\Config\ConfigObject;
 use Webiny\Component\Http\Session\SessionException;
 use Webiny\Component\StdLib\SingletonTrait;
 use Webiny\Component\StdLib\StdLibTrait;
+use Webiny\Component\StdLib\StdObject\ArrayObject\ArrayObject;
 
 /**
  * Session Http component.
@@ -21,15 +22,23 @@ class Session
 {
     use StdLibTrait, SingletonTrait;
 
-    private $_sessionBag;
-    private $_sessionId;
+    /**
+     * @var ArrayObject
+     */
+    private $sessionBag;
+
+    /**
+     * @var string
+     */
+    private $sessionId;
+
 
     /**
      * Constructor.
      *
      * @throws Session\SessionException
      */
-    protected function _init()
+    protected function init()
     {
         $config = self::getConfig();
 
@@ -52,13 +61,15 @@ class Session
             session_set_save_handler($saveHandler, false);
 
             // start the session
-            session_start();
+            if (session_status() == PHP_SESSION_NONE) {
+                session_start();
+            }
 
             // get session id
-            $this->_sessionId = session_id();
+            $this->sessionId = session_id();
 
             // save current session locally
-            $this->_sessionBag = $this->arr($_SESSION);
+            $this->sessionBag = $this->arr($_SESSION);
         } catch (\Exception $e) {
             throw new SessionException($e->getMessage());
         }
@@ -75,7 +86,7 @@ class Session
      */
     public function get($key, $value = null)
     {
-        $return = $this->_sessionBag->key($key, $value, true);
+        $return = $this->sessionBag->key($key, $value, true);
         $_SESSION[$key] = $return;
 
         return $return;
@@ -91,7 +102,7 @@ class Session
      */
     public function save($key, $value)
     {
-        $this->_sessionBag->removeKey($key)->append($key, $value);
+        $this->sessionBag->removeKey($key)->append($key, $value);
         $_SESSION[$key] = $value;
 
         return $this;
@@ -106,7 +117,7 @@ class Session
      */
     public function delete($key)
     {
-        $this->_sessionBag->removeKey($key);
+        $this->sessionBag->removeKey($key);
         unset($_SESSION[$key]);
 
         return true;
@@ -119,7 +130,7 @@ class Session
      */
     public function getSessionId()
     {
-        return $this->_sessionId;
+        return $this->sessionId;
     }
 
     /**
@@ -129,7 +140,7 @@ class Session
      */
     public function getAll()
     {
-        return $this->_sessionBag->val();
+        return $this->sessionBag->val();
     }
 
     /**
